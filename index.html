@@ -108,22 +108,28 @@ header#topbar{
   position:absolute; left:50%; bottom:-30px; transform:translateX(-50%); font-family:'IBM Plex Mono'; font-size:10.5px;
   color:var(--ink-dim); white-space:nowrap; letter-spacing:0.08em; opacity:0.75; pointer-events:none; transition:opacity .3s;
 }
-#mini-globe-dock.active .dock-hint{opacity:0;}
+#mini-globe-dock.peek .dock-hint, #mini-globe-dock.active .dock-hint{opacity:0;}
 
 .mode-btn{
   position:absolute; left:50%; top:50%; width:150px; margin-left:-75px; margin-top:-21px;
   padding:11px 16px; border-radius:24px; border:1px solid var(--line); background:rgba(20,43,79,0.9);
   backdrop-filter:blur(6px); color:var(--ink); font-family:'IBM Plex Mono'; font-size:12px; letter-spacing:0.03em;
-  cursor:pointer; opacity:0; pointer-events:none; transition:all .45s cubic-bezier(.34,1.56,.64,1);
+  cursor:pointer; opacity:0; pointer-events:none; transition:opacity .35s ease, transform .45s cubic-bezier(.34,1.56,.64,1), background .2s, border-color .2s;
   text-align:left; display:flex; align-items:center; gap:10px;
 }
 .mode-btn .num{color:var(--blue); font-weight:600;}
-.mode-btn:hover{border-color:var(--blue); background:rgba(77,168,255,0.14); box-shadow:0 0 20px rgba(77,168,255,0.25);}
+#mini-globe-dock.active .mode-btn:hover{border-color:var(--blue); background:rgba(77,168,255,0.16); box-shadow:0 0 20px rgba(77,168,255,0.25);}
+
+/* hover = translucent preview, not yet clickable */
+#mini-globe-dock.peek .mode-btn{opacity:0.4; pointer-events:none;}
+/* click = fully solid and clickable */
 #mini-globe-dock.active .mode-btn{opacity:1; pointer-events:auto;}
-#mini-globe-dock.active .mode-btn[data-mode="study"]{transform:translate(150px,-92px);}
-#mini-globe-dock.active .mode-btn[data-mode="fission"]{transform:translate(190px,0px);}
-#mini-globe-dock.active .mode-btn[data-mode="world"]{transform:translate(150px,92px);}
-#mini-globe-dock.active .mode-btn[data-mode="ask"]{transform:translate(60px,150px);}
+
+/* shared positions for both peek and active */
+#mini-globe-dock.peek .mode-btn[data-mode="study"], #mini-globe-dock.active .mode-btn[data-mode="study"]{transform:translate(150px,-92px);}
+#mini-globe-dock.peek .mode-btn[data-mode="fission"], #mini-globe-dock.active .mode-btn[data-mode="fission"]{transform:translate(190px,0px);}
+#mini-globe-dock.peek .mode-btn[data-mode="world"], #mini-globe-dock.active .mode-btn[data-mode="world"]{transform:translate(150px,92px);}
+#mini-globe-dock.peek .mode-btn[data-mode="ask"], #mini-globe-dock.active .mode-btn[data-mode="ask"]{transform:translate(60px,150px);}
 
 /* ========= MODE OVERLAYS ========= */
 .mode-overlay{
@@ -330,11 +336,28 @@ canvas.bar-canvas{width:100%; height:200px;}
     <div style="height:32px;"></div>
     <div class="tab-row">
       <button class="tab-btn sel" data-tab="rods">Control Rod Deep-Dive</button>
+      <button class="tab-btn" data-tab="control">Inside the Control Room</button>
       <button class="tab-btn" data-tab="passive">Passive Safety Simulator</button>
     </div>
 
     <div class="tab-pane show" id="tab-rods">
       <div class="legend-grid" id="rod-legend"></div>
+    </div>
+
+    <div class="tab-pane" id="tab-control">
+      <p class="mode-lede" style="margin-bottom:22px;">The control room is where a licensed crew keeps the reactor inside its safe operating limits, hour by hour. Nothing here is automatic in the sense of "unsupervised" — automatic systems act fast, but a human crew watches every one of them and can act faster than any single one on its own.</p>
+      <div class="legend-grid" style="grid-template-columns:repeat(3,1fr);">
+        <div class="legend-item"><div class="lt">NEUTRON FLUX / POWER RECORDER</div><div class="ld">A continuous trace of reactor power, usually 0–120% of rated output. This is the single number the whole shift watches most closely — it's the direct readout of the fission rate itself.</div></div>
+        <div class="legend-item"><div class="lt">ROD POSITION INDICATORS</div><div class="ld">A readout — often a vertical bar per rod or rod bank — showing exactly how far each control rod is inserted, in steps or percent. Operators use this to confirm the core's actual reactivity margin, not just the commanded one.</div></div>
+        <div class="legend-item"><div class="lt">COOLANT TEMPERATURE & PRESSURE GAUGES</div><div class="ld">Inlet and outlet coolant temperature, plus system pressure. The gap between inlet and outlet temperature tells the crew how much heat the core is actually producing.</div></div>
+        <div class="legend-item"><div class="lt">MANUAL ROD CONTROL SWITCHES</div><div class="ld">A key-locked switch or rotary control that lets an operator withdraw or insert a rod bank in small, deliberate steps — normally used only for small adjustments, since automatic control handles routine regulation.</div></div>
+        <div class="legend-item"><div class="lt">ALARM ANNUNCIATOR PANEL</div><div class="ld">A wall of labeled lights that stay dark in normal operation and light up (often with a horn) the instant any parameter — temperature, pressure, flow, radiation — leaves its allowed band. Crews are trained to silence the horn, then diagnose, in that order.</div></div>
+        <div class="legend-item"><div class="lt">RADIATION MONITORS</div><div class="ld">Continuous readouts of radiation levels in the containment, the coolant, and the plant's exhaust stack — an early, independent check that fuel cladding is doing its job.</div></div>
+        <div class="legend-item"><div class="lt">CONTAINMENT STATUS PANEL</div><div class="ld">Shows whether containment isolation valves are open or sealed, and whether containment pressure is within its normal band — the crew's confirmation that the last safety barrier is intact.</div></div>
+        <div class="legend-item"><div class="lt">SHIFT LOG & PROCEDURES</div><div class="ld">Every action — a rod move, an alarm, a test — is logged by hand or by the plant computer and checked against a written procedure. Nothing safety-relevant happens "from memory" alone.</div></div>
+        <div class="legend-item" style="border-color:var(--amber);"><div class="lt" style="color:var(--amber);">THE SCRAM / EMERGENCY SHUTDOWN BUTTON</div><div class="ld">One clearly guarded button (called AZ-5 at Chernobyl, "SCRAM" in most Western plants). Pressing it releases every control rod at once — usually by cutting power to electromagnets holding them up — so they fall or spring into the core within seconds, absorbing enough neutrons to stop the chain reaction almost immediately. It fires automatically on serious trip conditions (high power, low coolant flow, high pressure, loss of power) and can always be triggered manually by the crew.</div></div>
+      </div>
+      <p class="note-line" style="margin-top:24px; border-top:none; padding-top:0;">In modern SMR control rooms, much of this is digitized onto screens rather than physical dials and switches — but the same categories of information and the same emergency button are always present, by regulation.</p>
     </div>
 
     <div class="tab-pane" id="tab-passive">
@@ -618,8 +641,6 @@ const ARCHETYPES = {
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x0b1830, 0.02);
   const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
-  camera.position.set(0,0.6,7.2);
-  camera.lookAt(0,0,0);
   scene.add(makeStarfield(300,50));
   scene.add(new THREE.AmbientLight(0x3a6b96, 0.75));
   const sun = new THREE.DirectionalLight(0x4da8ff, 1.4);
@@ -636,7 +657,7 @@ const ARCHETYPES = {
   const labelHost = document.getElementById('intro-labels');
   const markers = SITES.map(s=>{
     const pos = latLonToVec3(s.lat, s.lon, 2.36);
-    const m = new THREE.Mesh(new THREE.SphereGeometry(0.055,14,14), new THREE.MeshStandardMaterial({color:0xffb238, emissive:0xffb238, emissiveIntensity:1.3}));
+    const m = new THREE.Mesh(new THREE.SphereGeometry(0.06,14,14), new THREE.MeshStandardMaterial({color:0xffb238, emissive:0xffb238, emissiveIntensity:1.4}));
     m.position.copy(pos);
     root.add(m);
     const label = document.createElement('div');
@@ -645,8 +666,23 @@ const ARCHETYPES = {
     return {mesh:m, pos, label};
   });
 
-  let t=0, phase='hold'; // hold -> leaving
-  function updateLabels(){
+  // Camera flight plan: a wide establishing view, then one waypoint per site in order,
+  // each reached by easing to a slow stop (like settling on a pin) before moving on.
+  function siteWaypoint(s){
+    const n = latLonToVec3(s.lat, s.lon, 1).normalize();
+    return n.clone().multiplyScalar(4.1).add(new THREE.Vector3(0, 0.55, 0));
+  }
+  const waypoints = [new THREE.Vector3(0.5, 1.6, 7.4)].concat(SITES.map(siteWaypoint));
+  const segCount = waypoints.length - 1; // one segment per site
+  const TOUR_MS = 6000;
+  const segMs = TOUR_MS / segCount;
+
+  function easeInOutCubic(x){ return x<0.5 ? 4*x*x*x : 1-Math.pow(-2*x+2,3)/2; }
+
+  let phase='tour'; // tour -> leaving
+  const startTime = performance.now();
+
+  function updateLabels(segIdx, te){
     const rect = canvas.getBoundingClientRect();
     markers.forEach((mk,i)=>{
       const v = mk.pos.clone().applyMatrix4(root.matrixWorld).project(camera);
@@ -654,7 +690,8 @@ const ARCHETYPES = {
       const y = (-v.y*0.5+0.5)*rect.height;
       mk.label.style.left = x+'px'; mk.label.style.top = y+'px';
       const facing = v.z < 1;
-      mk.label.classList.toggle('show', facing && phase==='hold' && t>0.6);
+      const isArriving = (i===segIdx && te>0.45) || (i===segIdx-1 && te<0.3);
+      mk.label.classList.toggle('show', facing && phase==='tour' && isArriving);
     });
   }
 
@@ -664,9 +701,18 @@ const ARCHETYPES = {
       camera.aspect = canvas.width/canvas.height; camera.updateProjectionMatrix();
       renderer.setSize(canvas.width, canvas.height,false);
     }
-    t += 0.012;
-    root.rotation.y += phase==='hold' ? 0.006 : 0.09;
-    updateLabels();
+    if(phase==='tour'){
+      const elapsed = performance.now()-startTime;
+      const segIdx = Math.min(segCount-1, Math.floor(elapsed/segMs));
+      const localT = Math.min(1, (elapsed-segIdx*segMs)/segMs);
+      const te = easeInOutCubic(localT);
+      camera.position.lerpVectors(waypoints[segIdx], waypoints[segIdx+1], te);
+      camera.lookAt(0,0,0);
+      updateLabels(segIdx, te);
+      root.rotation.y += 0.0006;
+    } else {
+      root.rotation.y += 0.09;
+    }
     renderer.render(scene,camera);
     syncGlow();
   }
@@ -683,18 +729,19 @@ const ARCHETYPES = {
   setTimeout(()=>{
     phase='leaving';
     introText.style.opacity='0';
+
     introInner.style.transform = 'translate(-46vw, 0) scale(0.22) rotate(220deg)';
     introInner.style.opacity = '0.4';
     labelHost.querySelectorAll('.intro-label').forEach(l=>l.classList.remove('show'));
-  }, 3000);
+  }, TOUR_MS);
 
   setTimeout(()=>{
     introOverlay.classList.add('leaving');
     app.classList.add('show');
     MiniGlobe.start();
-  }, 3950);
+  }, TOUR_MS + 950);
 
-  setTimeout(()=>{ introOverlay.style.display='none'; }, 4500);
+  setTimeout(()=>{ introOverlay.style.display='none'; }, TOUR_MS + 1500);
 })();
 
 /* ============================================================
@@ -755,12 +802,15 @@ const MiniGlobe = (function(){
     let speed = 0.006, targetSpeed = 0.006;
     const dock = document.getElementById('mini-globe-dock');
     const hit = document.getElementById('mini-globe-hit');
-    hit.addEventListener('mouseenter', ()=>{ dock.classList.add('active'); targetSpeed = 0.05; });
-    hit.addEventListener('mouseleave', ()=>{ dock.classList.remove('active'); targetSpeed = 0.006; });
+    // hover/leave bound to the whole dock (a common ancestor of the hit-zone AND the
+    // sprouting buttons) so moving the cursor from the globe toward a button never
+    // triggers a leave event in between — that was the flicker bug.
+    dock.addEventListener('mouseenter', ()=>{ dock.classList.add('peek'); targetSpeed = 0.05; });
+    dock.addEventListener('mouseleave', ()=>{ dock.classList.remove('peek'); dock.classList.remove('active'); targetSpeed = 0.006; });
     hit.addEventListener('click', ()=>{ dock.classList.toggle('active'); });
 
     document.querySelectorAll('.mode-btn').forEach(btn=>{
-      btn.addEventListener('click', ()=>{ openMode(btn.dataset.mode); dock.classList.remove('active'); });
+      btn.addEventListener('click', ()=>{ openMode(btn.dataset.mode); dock.classList.remove('active'); dock.classList.remove('peek'); });
     });
 
     function render(){
