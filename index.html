@@ -9,10 +9,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg: #0b1830;
-  --bg2: #112544;
-  --panel: #142b4f;
-  --panel-2: #17325c;
+  --bg: #060b16;
+  --bg2: #0a1526;
+  --panel: #0d1a30;
+  --panel-2: #10203c;
   --blue: #4da8ff;
   --blue-dim: #2a6bb0;
   --cyan: #5eeaea;
@@ -27,7 +27,7 @@
 html{scroll-behavior:smooth;}
 body{
   margin:0; height:100vh; overflow:hidden;
-  background:radial-gradient(ellipse at 30% 0%, #1a3a68 0%, #0b1830 55%, #071022 100%);
+  background:radial-gradient(ellipse at 30% 0%, #0d1f3d 0%, #060b16 55%, #000103 100%);
   color:var(--ink);
   font-family:'IBM Plex Sans', sans-serif;
 }
@@ -39,7 +39,7 @@ button{font-family:inherit;}
 /* ========= INTRO ========= */
 #intro-overlay{
   position:fixed; inset:0; z-index:3000; display:flex; flex-direction:column; align-items:center; justify-content:center;
-  background:radial-gradient(ellipse at center, #16305c 0%, #0b1830 60%, #071022 100%);
+  background:radial-gradient(ellipse at center, #0c1d38 0%, #060b16 60%, #000103 100%);
   transition:opacity .5s ease;
 }
 #intro-inner{ position:relative; width:520px; height:520px; transition:transform 1.1s cubic-bezier(.7,0,.3,1), opacity 1.1s ease; }
@@ -134,9 +134,11 @@ header#topbar{
 /* ========= MODE OVERLAYS ========= */
 .mode-overlay{
   position:fixed; inset:0; z-index:500; display:none; flex-direction:column;
-  background:radial-gradient(ellipse at top, #142b4f 0%, #0b1830 55%, #071022 100%);
+  background:radial-gradient(ellipse at top, #0d1c33 0%, #060b16 55%, #000103 100%);
+  opacity:0; transform:scale(0.985); transition:opacity .35s ease, transform .4s cubic-bezier(.2,.8,.2,1);
 }
 .mode-overlay.show{display:flex;}
+.mode-overlay.show-anim{opacity:1; transform:scale(1);}
 .mode-top{
   display:flex; justify-content:space-between; align-items:center; padding:18px 32px;
   border-bottom:1px solid var(--line); background:rgba(11,24,48,0.75); backdrop-filter:blur(8px); z-index:5;
@@ -152,7 +154,7 @@ header#topbar{
 
 /* generic panel layout reused across modes */
 .split-layout{display:grid; grid-template-columns:1.5fr 1fr; gap:0; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:var(--panel);}
-.split-layout .viewport{position:relative; height:560px; background:#0a1930;}
+.split-layout .viewport{position:relative; height:560px; background:#040911;}
 .split-layout .viewport canvas{position:absolute; inset:0; width:100%; height:100%;}
 .split-layout .viewport .glowcanvas{pointer-events:none; mix-blend-mode:screen; opacity:0.5;}
 .side-panel{border-left:1px solid var(--line); padding:26px; height:560px; overflow-y:auto;}
@@ -192,7 +194,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:16px; hei
 
 /* world mode: globe + site list, compare charts, calculator */
 .globe-layout{display:grid; grid-template-columns:1fr 1.05fr; gap:0; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:var(--panel); margin-bottom:36px;}
-#globe-wrap{position:relative; height:500px; background:#0a1930;}
+#globe-wrap{position:relative; height:500px; background:#040911;}
 #globe-canvas, #globe-glow{position:absolute; inset:0; width:100%; height:100%;}
 #globe-glow{pointer-events:none; mix-blend-mode:screen; opacity:0.5;}
 .site-list{border-left:1px solid var(--line); padding:22px; height:500px; overflow-y:auto;}
@@ -373,7 +375,7 @@ canvas.bar-canvas{width:100%; height:200px;}
           </div>
           <p style="margin-top:14px;">Toggle passive safety off to see why older active-only designs depended entirely on emergency power and fast operator response.</p>
         </div>
-        <div class="viewport" style="background:#0a1930; padding:20px;">
+        <div class="viewport" style="background:#040911; padding:20px;">
           <canvas id="sim-canvas" style="position:static; height:340px;"></canvas>
           <div style="display:flex; gap:24px; margin-top:16px; flex-wrap:wrap; font-family:'IBM Plex Mono';">
             <div><div class="readout" id="temp-readout" style="font-size:22px;">300°C</div><div class="readout-label">CORE TEMP (illustrative)</div></div>
@@ -394,7 +396,17 @@ canvas.bar-canvas{width:100%; height:200px;}
   </div>
   <div class="mode-body">
     <div class="eyebrow">Neutrons, moderation, and heat — in 3D</div>
-    <p class="mode-lede">Watch a fast neutron slow down as it passes through moderator, then strike a Uranium-235 nucleus. The nucleus splits into two fragments, kicks out fresh neutrons, and releases a burst of heat — the entire physical basis of every reactor on this site.</p>
+    <p class="mode-lede">Watch a fast neutron slow down as it passes through moderator, then strike a Uranium-235 nucleus. The nucleus splits into two fragments, kicks out fresh neutrons, and releases a burst of heat — the entire physical basis of every reactor on this site. Below the simulation is exactly what causes that split and where the heat actually comes from.</p>
+
+    <div class="legend-grid" style="grid-template-columns:repeat(3,1fr); margin-bottom:34px;">
+      <div class="legend-item"><div class="lt">01 · ABSORPTION & EXCITATION</div><div class="ld">A passing neutron is captured by a Uranium-235 nucleus, forming Uranium-236 in a highly excited, wobbling state — like one drop too many landing on an already-trembling water balloon.</div></div>
+      <div class="legend-item"><div class="lt">02 · DEFORMATION</div><div class="ld">That extra energy stretches the nucleus from a rough sphere into an elongated, dumbbell-like shape as the added energy fights the strong nuclear force trying to hold it together.</div></div>
+      <div class="legend-item"><div class="lt">03 · THE SPLIT ITSELF</div><div class="ld">Once stretched far enough, electric repulsion between protons in each lobe overwhelms the short-range strong force, and the nucleus tears into two lighter "fission fragments" — commonly one around the mass of barium and one around the mass of krypton.</div></div>
+      <div class="legend-item"><div class="lt">04 · NEUTRON & GAMMA RELEASE</div><div class="ld">The fragments come out carrying more neutrons than they can hold onto stably, so the split also flings out 2–3 free neutrons plus a burst of gamma radiation.</div></div>
+      <div class="legend-item"><div class="lt">05 · WHERE THE HEAT COMES FROM</div><div class="ld">Roughly 80% of the released energy shows up as the raw kinetic energy of the two fragments rocketing apart. As they slam into surrounding atoms, that motion converts into heat — a reactor doesn't "burn" fuel, it catches flying debris.</div></div>
+      <div class="legend-item" style="border-color:var(--blue);"><div class="lt">06 · CARRYING THE REACTION FORWARD</div><div class="ld">The freed neutrons come out too fast to reliably split another nucleus. A moderator (water or graphite) slows them through repeated collisions until they're "thermal" — at which point they're far more likely to be captured and repeat the cycle.</div></div>
+    </div>
+
     <div class="split-layout">
       <div class="viewport"><canvas id="fission-canvas"></canvas><canvas class="glowcanvas" id="fission-glow"></canvas></div>
       <div class="side-panel">
@@ -409,6 +421,16 @@ canvas.bar-canvas{width:100%; height:200px;}
         </div>
         <div class="legend-grid" id="fission-legend"></div>
       </div>
+    </div>
+
+    <div style="height:30px;"></div>
+    <div class="chart-card">
+      <h4>Reference Simulation</h4>
+      <p style="color:var(--ink-dim); font-size:13px; margin-bottom:16px; text-transform:none; letter-spacing:normal; font-family:'IBM Plex Sans';">For a rigorously tested, research-grade version of this same physics — including the option to build toward an uncontrolled chain reaction and see why control rods matter — this is the actual PhET Interactive Simulations tool, embedded unmodified below.</p>
+      <div style="border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:#000;">
+        <iframe src="https://phet.colorado.edu/sims/html/nuclear-fission/latest/nuclear-fission_en.html" style="width:100%; height:520px; border:0; display:block;" allowfullscreen loading="lazy" title="PhET Nuclear Fission Simulation"></iframe>
+      </div>
+      <p class="note-line" style="margin-top:14px;">Simulation: <a href="https://phet.colorado.edu/en/simulations/nuclear-fission" target="_blank" rel="noopener" style="color:var(--blue);">PhET Interactive Simulations, University of Colorado Boulder</a> — used under their <a href="https://phet.colorado.edu/en/licensing" target="_blank" rel="noopener" style="color:var(--blue);">CC BY 4.0 license</a>. If your network blocks the embed, the link opens it directly in a new tab.</p>
     </div>
   </div>
 </div>
@@ -564,6 +586,66 @@ function makeEarthTexture(){
   tex.needsUpdate = true;
   return tex;
 }
+
+/* ============================================================
+   NETWORK GLOBE — the dark, geodesic "data globe" look:
+   a near-black core sphere, a glowing triangulated wireframe shell,
+   a faint dust of surface points, amber site nodes, and raised
+   blue flight-path arcs connecting them. Used everywhere a globe
+   appears (intro flythrough, mini dock, Nuclear World) so the
+   look is identical across the whole site.
+============================================================ */
+function buildNetworkGlobe(radius){
+  const group = new THREE.Group();
+
+  const core = new THREE.Mesh(
+    new THREE.SphereGeometry(radius*0.985, 48, 48),
+    new THREE.MeshStandardMaterial({color:0x03060d, emissive:0x081226, emissiveIntensity:0.7, roughness:0.85, metalness:0.1})
+  );
+  group.add(core);
+
+  const wire = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(radius, 3),
+    new THREE.MeshBasicMaterial({color:0x4da8ff, wireframe:true, transparent:true, opacity:0.22})
+  );
+  group.add(wire);
+
+  const dotCount = 500;
+  const dotPos = new Float32Array(dotCount*3);
+  for(let i=0;i<dotCount;i++){
+    const v = new THREE.Vector3(Math.random()-0.5, Math.random()-0.5, Math.random()-0.5).normalize().multiplyScalar(radius*1.002);
+    dotPos[i*3]=v.x; dotPos[i*3+1]=v.y; dotPos[i*3+2]=v.z;
+  }
+  const dotGeo = new THREE.BufferGeometry();
+  dotGeo.setAttribute('position', new THREE.BufferAttribute(dotPos,3));
+  const dots = new THREE.Points(dotGeo, new THREE.PointsMaterial({color:0x5eeaea, size:radius*0.013, transparent:true, opacity:0.3}));
+  group.add(dots);
+
+  const markers = SITES.map(s=>{
+    const pos = latLonToVec3(s.lat, s.lon, radius*1.012);
+    const m = new THREE.Mesh(
+      new THREE.SphereGeometry(radius*0.024, 14, 14),
+      new THREE.MeshStandardMaterial({color:0xffb238, emissive:0xffb238, emissiveIntensity:1.4})
+    );
+    m.position.copy(pos);
+    group.add(m);
+    return {mesh:m, pos, site:s};
+  });
+
+  // raised flight-path arcs linking each site to the next, tracing the globe's shell
+  for(let i=0;i<markers.length;i++){
+    const a = markers[i].pos, b = markers[(i+1)%markers.length].pos;
+    const mid = a.clone().add(b).multiplyScalar(0.5).normalize().multiplyScalar(radius*1.4);
+    const curve = new THREE.QuadraticBezierCurve3(a, mid, b);
+    const pts = curve.getPoints(28);
+    const geo = new THREE.BufferGeometry().setFromPoints(pts);
+    const mat = new THREE.LineBasicMaterial({color:0x4da8ff, transparent:true, opacity:0.4});
+    group.add(new THREE.Line(geo, mat));
+  }
+
+  return {group, markers};
+}
+
 function setupGlowLayer(sourceCanvas, glowCanvas){
   const gctx = glowCanvas.getContext('2d');
   return function syncGlow(){
@@ -649,21 +731,15 @@ const ARCHETYPES = {
 
   const root = new THREE.Group();
   scene.add(root);
-  const globe = new THREE.Mesh(new THREE.SphereGeometry(2.3,48,48), new THREE.MeshStandardMaterial({map:makeEarthTexture(), roughness:0.65, metalness:0.15}));
-  root.add(globe);
-  const wire = new THREE.Mesh(new THREE.SphereGeometry(2.31,20,14), new THREE.MeshBasicMaterial({color:0x4da8ff, wireframe:true, transparent:true, opacity:0.14}));
-  root.add(wire);
+  const {group: netGlobe, markers: netMarkers} = buildNetworkGlobe(2.3);
+  root.add(netGlobe);
 
   const labelHost = document.getElementById('intro-labels');
-  const markers = SITES.map(s=>{
-    const pos = latLonToVec3(s.lat, s.lon, 2.36);
-    const m = new THREE.Mesh(new THREE.SphereGeometry(0.06,14,14), new THREE.MeshStandardMaterial({color:0xffb238, emissive:0xffb238, emissiveIntensity:1.4}));
-    m.position.copy(pos);
-    root.add(m);
+  const markers = netMarkers.map(nm=>{
     const label = document.createElement('div');
-    label.className='intro-label'; label.textContent = s.name.split(' ')[0]+' — '+s.loc.split(',').pop().trim();
+    label.className='intro-label'; label.textContent = nm.site.name.split(' ')[0]+' — '+nm.site.loc.split(',').pop().trim();
     labelHost.appendChild(label);
-    return {mesh:m, pos, label};
+    return {mesh:nm.mesh, pos:nm.pos, label};
   });
 
   // Camera flight plan: a wide establishing view, then one waypoint per site in order,
@@ -788,16 +864,8 @@ const MiniGlobe = (function(){
     const sun = new THREE.DirectionalLight(0x4da8ff,1.3);
     sun.position.set(2,2,3);
     scene.add(sun);
-    const globe = new THREE.Mesh(new THREE.SphereGeometry(1.3,32,32), new THREE.MeshStandardMaterial({map:makeEarthTexture(), roughness:0.6, metalness:0.2}));
-    scene.add(globe);
-    const wire = new THREE.Mesh(new THREE.SphereGeometry(1.32,16,10), new THREE.MeshBasicMaterial({color:0x4da8ff, wireframe:true, transparent:true, opacity:0.2}));
-    scene.add(wire);
-    SITES.forEach(s=>{
-      const pos = latLonToVec3(s.lat,s.lon,1.34);
-      const m = new THREE.Mesh(new THREE.SphereGeometry(0.035,8,8), new THREE.MeshStandardMaterial({color:0xffb238, emissive:0xffb238, emissiveIntensity:1.2}));
-      m.position.copy(pos);
-      globe.add(m);
-    });
+    const globeBuild = buildNetworkGlobe(1.3);
+    scene.add(globeBuild.group);
 
     let speed = 0.006, targetSpeed = 0.006;
     const dock = document.getElementById('mini-globe-dock');
@@ -834,11 +902,15 @@ const MiniGlobe = (function(){
 ============================================================ */
 const MODE_INIT = {}; // lazily init heavy scenes only once opened
 function openMode(name){
-  document.getElementById('mode-'+name).classList.add('show');
+  const el = document.getElementById('mode-'+name);
+  el.classList.add('show');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show-anim')));
   if(!MODE_INIT[name] && window['init_'+name]) { window['init_'+name](); MODE_INIT[name]=true; }
 }
 function closeMode(name){
-  document.getElementById('mode-'+name).classList.remove('show');
+  const el = document.getElementById('mode-'+name);
+  el.classList.remove('show-anim');
+  setTimeout(()=>el.classList.remove('show'), 400);
 }
 
 /* ============================================================
@@ -853,7 +925,7 @@ window.init_study = function(){
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   const syncGlow = setupGlowLayer(canvas, glow);
   const scene = new THREE.Scene();
-  scene.background = makeSkyTexture('#123258','#081326');
+  scene.background = makeSkyTexture('#0a1830','#020408');
   scene.fog = new THREE.FogExp2(0x081326, 0.03);
   const camera = new THREE.PerspectiveCamera(42,1,0.1,100);
   camera.position.set(6,3,7); camera.lookAt(0,0,0);
@@ -864,12 +936,17 @@ window.init_study = function(){
   floor.rotation.x=-Math.PI/2; floor.position.y=-2.6; scene.add(floor);
 
   let group = new THREE.Group(); scene.add(group);
+  let outgoingGroup = null;
   let rodMeshes = [];
   let currentPlantIdx = 0;
 
   function clearGroup(){
-    scene.remove(group);
-    group = new THREE.Group(); scene.add(group); rodMeshes=[];
+    if(outgoingGroup) scene.remove(outgoingGroup);
+    outgoingGroup = group;
+    group = new THREE.Group();
+    group.scale.setScalar(0.001);
+    scene.add(group);
+    rodMeshes=[];
   }
 
   function buildArchetype(key){
@@ -987,10 +1064,10 @@ window.init_study = function(){
   buildArchetype(SITES[0].archetype);
 
   let t=0;
-  let dragging=false, lastX=0, rotY=0.5;
+  let dragging=false, lastX=0, rotY=0.5, rotYTarget=0.5;
   canvas.addEventListener('pointerdown', e=>{dragging=true; lastX=e.clientX;});
   window.addEventListener('pointerup', ()=>dragging=false);
-  window.addEventListener('pointermove', e=>{ if(!dragging)return; rotY += (e.clientX-lastX)*0.008; lastX=e.clientX; });
+  window.addEventListener('pointermove', e=>{ if(!dragging)return; rotYTarget += (e.clientX-lastX)*0.008; lastX=e.clientX; });
 
   function render(){
     requestAnimationFrame(render);
@@ -1004,7 +1081,16 @@ window.init_study = function(){
       if(r.mode==='vertical') r.mesh.position.y = r.baseY - insertion*2.2;
       if(r.mode==='drum') r.mesh.rotation.z = t*0.6;
     });
+    // materialize the incoming archetype in, shrink the outgoing one out
+    group.scale.x += (1-group.scale.x)*0.13;
+    group.scale.y = group.scale.z = group.scale.x;
+    if(outgoingGroup){
+      outgoingGroup.scale.multiplyScalar(0.8);
+      if(outgoingGroup.scale.x < 0.01){ scene.remove(outgoingGroup); outgoingGroup=null; }
+    }
+    rotY += (rotYTarget-rotY)*0.12;
     group.rotation.y = rotY;
+    if(outgoingGroup) outgoingGroup.rotation.y = rotY;
     renderer.render(scene,camera);
     syncGlow();
   }
@@ -1047,7 +1133,7 @@ const Safety = (function(){
     function draw(){
       resizeCanvasToDisplaySize(canvas);
       const W=canvas.width,H=canvas.height;
-      ctx.fillStyle='#0a1930'; ctx.fillRect(0,0,W,H);
+      ctx.fillStyle='#040911'; ctx.fillRect(0,0,W,H);
       ctx.strokeStyle='rgba(77,168,255,0.1)';
       for(let i=0;i<10;i++){ ctx.beginPath(); ctx.moveTo(0,H*i/10); ctx.lineTo(W,H*i/10); ctx.stroke(); }
       ctx.beginPath();
@@ -1085,7 +1171,7 @@ window.init_fission = function(){
   renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
   const syncGlow = setupGlowLayer(canvas, glow);
   const scene = new THREE.Scene();
-  scene.background = makeSkyTexture('#123258','#081326');
+  scene.background = makeSkyTexture('#0a1830','#020408');
   scene.fog = new THREE.FogExp2(0x081326, 0.05);
   const camera = new THREE.PerspectiveCamera(45,1,0.1,100);
   camera.position.set(0,1.5,6.5); camera.lookAt(0,0,0);
@@ -1281,7 +1367,7 @@ window.init_world = function(){
   renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
   const syncGlow = setupGlowLayer(canvas, glowCanvas);
   const scene = new THREE.Scene();
-  scene.background = makeSkyTexture('#123258','#04090f');
+  scene.background = makeSkyTexture('#0a1830','#020408');
   scene.fog = new THREE.FogExp2(0x04090f,0.018);
   const camera = new THREE.PerspectiveCamera(42,1,0.1,100);
   camera.position.set(0,1,9); camera.lookAt(0,0,0);
@@ -1290,19 +1376,13 @@ window.init_world = function(){
   const sun = new THREE.DirectionalLight(0x4da8ff,1.4); sun.position.set(5,4,6); scene.add(sun);
 
   const root = new THREE.Group(); scene.add(root);
-  const globe = new THREE.Mesh(new THREE.SphereGeometry(2.4,48,48), new THREE.MeshStandardMaterial({map:makeEarthTexture(), roughness:0.6, metalness:0.2}));
-  root.add(globe);
-  const wire = new THREE.Mesh(new THREE.SphereGeometry(2.41,24,16), new THREE.MeshBasicMaterial({color:0x4da8ff, wireframe:true, transparent:true, opacity:0.16}));
-  root.add(wire);
+  const {group: netGlobe2, markers: netMarkers2} = buildNetworkGlobe(2.4);
+  root.add(netGlobe2);
 
   const markerMeshes = [];
-  SITES.forEach(s=>{
-    const pos = latLonToVec3(s.lat,s.lon,2.45);
-    const marker = new THREE.Mesh(new THREE.SphereGeometry(0.07,16,16), new THREE.MeshStandardMaterial({color:0xffb238, emissive:0xffb238, emissiveIntensity:1.2}));
-    marker.position.copy(pos);
-    root.add(marker);
-    markerMeshes.push(marker);
-    s._marker = marker;
+  netMarkers2.forEach(nm=>{
+    markerMeshes.push(nm.mesh);
+    nm.site._marker = nm.mesh;
   });
 
   function buildSiteList(){
@@ -1554,8 +1634,17 @@ const CM = (function(){
   }
   return { start(){ step=0; renderScene(0); }, choose(i){ choose(i,false); }, restart(){ renderIntro(); }, reset(){ step=-1; renderIntro(); } };
 })();
-function openCaseStudy(){ document.getElementById('mode-casestudy').classList.add('show'); CM.reset(); }
-function closeCaseStudy(){ document.getElementById('mode-casestudy').classList.remove('show'); }
+function openCaseStudy(){
+  const el = document.getElementById('mode-casestudy');
+  el.classList.add('show');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show-anim')));
+  CM.reset();
+}
+function closeCaseStudy(){
+  const el = document.getElementById('mode-casestudy');
+  el.classList.remove('show-anim');
+  setTimeout(()=>el.classList.remove('show'), 400);
+}
 </script>
 </body>
 </html>
