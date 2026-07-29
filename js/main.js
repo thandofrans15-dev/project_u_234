@@ -1,8 +1,7 @@
-/* main.js
-   Boot sequence + mode router. This is the one file that knows about
-   every other module. To add a fifth mode: drop a file in js/modes/
-   exporting mount(container) -> unmount, then add one line to MODE_MAP.
-*/
+// main.js
+// This is the file that starts everything. It shows the intro, then the
+// hub menu, and switches to the mode they want
+
 import { playIntro } from './intro-globe.js';
 import { mountHub } from './hub-menu.js';
 import * as reactorStudy from './modes/reactor-study.js';
@@ -10,19 +9,20 @@ import * as nuclearFission from './modes/nuclear-fission.js';
 import * as nuclearWorld from './modes/nuclear-world.js';
 import * as ask from './modes/ask.js';
 
-const MODE_MAP = {
+// this connects each mode name to its file
+var MODE_MAP = {
   'reactor-study': reactorStudy,
   'nuclear-fission': nuclearFission,
   'nuclear-world': nuclearWorld,
   'ask': ask
 };
 
-const introEl = document.getElementById('intro-globe');
-const hubEl = document.getElementById('hub-menu');
-const modeEl = document.getElementById('mode-container');
-const backBtn = document.getElementById('back-to-hub');
+var introEl = document.getElementById('intro-globe');
+var hubEl = document.getElementById('hub-menu');
+var modeEl = document.getElementById('mode-container');
+var backBtn = document.getElementById('back-to-hub');
 
-let currentUnmount = null;
+var currentUnmount = null;
 
 function showHub() {
   modeEl.classList.remove('active');
@@ -30,17 +30,13 @@ function showHub() {
   backBtn.classList.remove('visible');
   hubEl.classList.add('active');
   hubEl.style.display = '';
-  mountHubMenu();
-}
-
-function mountHubMenu() {
-  mountHub(hubEl, (modeId) => enterMode(modeId));
+  mountHub(hubEl, enterMode);
 }
 
 function enterMode(modeId) {
-  const mode = MODE_MAP[modeId];
+  var mode = MODE_MAP[modeId];
   if (!mode) {
-    console.warn(`Unknown mode: ${modeId}`);
+    console.log('unknown mode: ' + modeId);
     return;
   }
   hubEl.classList.remove('active');
@@ -50,7 +46,7 @@ function enterMode(modeId) {
   currentUnmount = mode.mount(modeEl);
 }
 
-backBtn.addEventListener('click', () => {
+backBtn.addEventListener('click', function () {
   if (currentUnmount) {
     currentUnmount();
     currentUnmount = null;
@@ -58,8 +54,8 @@ backBtn.addEventListener('click', () => {
   showHub();
 });
 
-// boot: intro -> hub
-playIntro(introEl, () => {
+// start everything: play intro, then show the hub
+playIntro(introEl, function () {
   introEl.style.display = 'none';
   showHub();
 });
