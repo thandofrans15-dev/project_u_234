@@ -1,35 +1,31 @@
-// smr-core-model.js
-// This is the math for the reactor. formy is:
-// Q = mass_flow_rate * specific_heat * (outlet_temp - inlet_temp)
-// I just rearranged it to solve for outlet_temp since that's what we
-// want to check against the safety limit. thank you Mlalazi
-
-class ModularReactorModel {
+/* smr-core-model.js
+   Core thermal-hydraulic engine for the SMR simulation.
+   Q = m_dot * Cp * (T_out - T_in)
+   This is the single source of truth — every mode that shows reactor
+   numbers should import this rather than recalculating anything locally.
+*/
+export class ModularReactorModel {
   constructor() {
-    this.specificHeat = 4184;   // water, J per kg per degree C
-    this.massFlowRate = 600;    // kg of water per second
-    this.inletTemp = 250;       // water coming back in, in Celsius
-    this.maxTemp = 330;         // if outlet goes above this, its not safe
-    this.maxPower = 160;        // biggest the reactor can go, in MW
+    this.coolantSpecificHeat = 4184;   // J/kg°C, pressurized water
+    this.massFlowRate = 600.0;         // kg/s, nominal pump-assisted flow
+    this.targetInletTemp = 250.0;      // °C, water returning from steam generator
+    this.maxAllowedTemp = 330.0;       // °C, safety boundary
+    this.designPowerMW = 160.0;        // MWth ceiling, iPWR-class module
   }
 
-  // give it the power in MW and it tells you the temps
-  getResults(powerMW) {
-    var powerWatts = powerMW * 1000000;
-    var tempRise = powerWatts / (this.massFlowRate * this.specificHeat);
-    var outletTemp = this.inletTemp + tempRise;
-    var safe = outletTemp <= this.maxTemp;
-
+  calculateCoreThermalHydraulics(corePowerMW) {
+    const powerWatts = corePowerMW * 1_000_000;
+    const tempRise = powerWatts / (this.massFlowRate * this.coolantSpecificHeat);
+    const outletTemp = this.targetInletTemp + tempRise;
+    const isSafe = outletTemp <= this.maxAllowedTemp;
     return {
-      powerMW: powerMW,
-      powerWatts: powerWatts,
-      inletTemp: this.inletTemp,
-      outletTemp: outletTemp,
-      tempRise: tempRise,
-      margin: this.maxTemp - outletTemp,
-      safe: safe
+      powerMW: corePowerMW,
+      powerWatts,
+      inletTemp: this.targetInletTemp,
+      outletTemp,
+      tempRise,
+      margin: this.maxAllowedTemp - outletTemp,
+      isSafe
     };
   }
 }
-
-export { ModularReactorModel };
