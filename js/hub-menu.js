@@ -1,38 +1,33 @@
-// hub-menu.js
-// Draws the 4 buttons for picking a mode. When you click one it calls
-// onSelect with the name of the mode.
-
-var MODES = [
-  { id: 'reactor-study', label: 'Reactor Study' },
-  { id: 'nuclear-fission', label: 'Nuclear Fission' },
-  { id: 'nuclear-world', label: 'Nuclear World' },
-  { id: 'ask', label: 'Ask' }
+/* hub-menu.js
+   Renders the radial menu hub with the four modes and calls onSelect(id)
+   when the user picks one. main.js owns the router; this module only
+   knows how to draw itself and report clicks.
+*/
+const MODES = [
+  { id: 'reactor-study', label: 'REACTOR STUDY' },
+  { id: 'nuclear-fission', label: 'NUCLEAR FISSION' },
+  { id: 'nuclear-world', label: 'NUCLEAR WORLD' },
+  { id: 'ask', label: 'ASK' }
 ];
 
-function mountHub(container, onSelect) {
-  var html = '<div id="hub-ring">';
-  for (var i = 0; i < MODES.length; i++) {
-    html += '<button class="hub-node" data-mode="' + MODES[i].id + '">' + MODES[i].label + '</button>';
+export function mountHub(container, onSelect) {
+  container.innerHTML = `
+    <div id="hub-ring">
+      ${MODES.map((m, i) => `
+        <button class="hub-node" data-mode="${m.id}" style="--i:${i}">
+          <span>${m.label}</span>
+        </button>
+      `).join('')}
+    </div>
+  `;
+  const buttons = container.querySelectorAll('.hub-node');
+  function handler(e) {
+    onSelect(e.currentTarget.dataset.mode);
   }
-  html += '</div>';
-  container.innerHTML = html;
+  buttons.forEach(b => b.addEventListener('click', handler));
 
-  var buttons = container.querySelectorAll('.hub-node');
-  function handleClick(event) {
-    var modeId = event.currentTarget.getAttribute('data-mode');
-    onSelect(modeId);
-  }
-  for (var b = 0; b < buttons.length; b++) {
-    buttons[b].addEventListener('click', handleClick);
-  }
-
-  function unmountHub() {
-    for (var b2 = 0; b2 < buttons.length; b2++) {
-      buttons[b2].removeEventListener('click', handleClick);
-    }
+  return function unmountHub() {
+    buttons.forEach(b => b.removeEventListener('click', handler));
     container.innerHTML = '';
-  }
-  return unmountHub;
+  };
 }
-
-export { mountHub };
