@@ -1,6 +1,3 @@
-ask.js
-// Not built yet - just incase i make it to nationals
-
 function mount(container) {
   container.innerHTML =
     '<div class="rs-panel" style="position:absolute; top:60px; left:60px; right:60px; bottom:60px; ' +
