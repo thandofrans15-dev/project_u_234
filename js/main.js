@@ -4,10 +4,10 @@
 
 import { playIntro } from './intro-globe.js';
 import { mountHub } from './hub-menu.js';
-import * as reactorStudy from './modes/reactor-study.js';
-import * as nuclearFission from './modes/nuclear-fission.js';
-import * as nuclearWorld from './modes/nuclear-world.js';
-import * as ask from './modes/ask.js';
+import * as reactorStudy from './reactor-study.js';
+import * as nuclearFission from './nuclear-fission.js';
+import * as nuclearWorld from './nuclear-world.js';
+import * as ask from './ask.js';
 
 // this connects each mode name to its file
 var MODE_MAP = {
