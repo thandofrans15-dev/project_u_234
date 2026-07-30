@@ -5,7 +5,7 @@
 */
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { ModularReactorModel } from '../physics/smr-core-model.js';
+import { ModularReactorModel } from './smr-core-model.js';
 
 const HUD_HTML = `
 <div id="rs-hud">
